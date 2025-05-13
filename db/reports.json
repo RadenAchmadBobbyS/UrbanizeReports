@@ -1,0 +1,39 @@
+[
+  {
+    "title": "Jalan Rusak di Jalan Merdeka",
+    "description": "Lubang besar di tengah jalan, membahayakan pengendara motor.",
+    "category": "Infrastruktur",
+    "location": {
+      "lat": -6.200000,
+      "lng": 106.816666,
+      "address": "Jl. Merdeka No.10, Jakarta"
+    },
+    "mediaUrls": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "status": "open",
+    "createdBy": "user123",
+    "voteCount": 15,
+    "createdAt": "2025-05-13T10:00:00.000Z",
+    "updatedAt": "2025-05-13T12:00:00.000Z"
+  },
+  {
+    "title": "Sampah Menumpuk di Sungai",
+    "description": "Sampah plastik dan organik menumpuk di sungai belakang pasar.",
+    "category": "Lingkungan",
+    "location": {
+      "lat": -6.210000,
+      "lng": 106.820000,
+      "address": "Sungai Belakang Pasar, Jakarta"
+    },
+    "mediaUrls": [
+      "https://example.com/sungai1.jpg"
+    ],
+    "status": "open",
+    "createdBy": "user456",
+    "voteCount": 8,
+    "createdAt": "2025-05-12T09:30:00.000Z",
+    "updatedAt": "2025-05-12T09:45:00.000Z"
+  }
+]

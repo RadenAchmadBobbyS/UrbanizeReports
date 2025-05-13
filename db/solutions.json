@@ -1,0 +1,29 @@
+[
+  {
+    "reportId": "report123",
+    "userId": "user789",
+    "content": "Kami akan menutup lubang menggunakan aspal sementara sambil menunggu perbaikan permanen.",
+    "upvotes": 5,
+    "comments": [
+      {
+        "userId": "user001",
+        "text": "Solusi cepat yang bagus, terima kasih!",
+        "createdAt": "2025-05-13T12:30:00.000Z"
+      },
+      {
+        "userId": "user002",
+        "text": "Pastikan juga ada rambu peringatan sementara.",
+        "createdAt": "2025-05-13T13:00:00.000Z"
+      }
+    ],
+    "createdAt": "2025-05-13T12:00:00.000Z"
+  },
+  {
+    "reportId": "report456",
+    "userId": "user321",
+    "content": "Kami akan mengadakan kerja bakti bersama warga untuk membersihkan sungai minggu depan.",
+    "upvotes": 3,
+    "comments": [],
+    "createdAt": "2025-05-13T11:00:00.000Z"
+  }
+]
