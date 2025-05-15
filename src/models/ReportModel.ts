@@ -12,10 +12,16 @@ export class ReportModel {
     return await this.collection().insertOne({
       ...reportData,
       voteCount: 0,
-      status: "terdaftar",
+      status: "Dilaporkan",
       createdAt: new Date(),
     });
   }
+
+  static async findSimilar(category: string, excludeId?: string, limit: number = 5) {
+    const query: any = { category };
+    if (excludeId) query._id = { $ne: new ObjectId(excludeId) };
+    return await this.collection().find(query).limit(limit).toArray();
+ }
 
   static async findById(reportId: string) {
     return await this.collection().findOne({ _id: new ObjectId(reportId) });

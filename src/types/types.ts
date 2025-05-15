@@ -11,20 +11,43 @@ export type UserType = {
   updatedAt: Date;
 }
 
-export type ReportType = {
-  _id: string | ObjectId;
+export type Category = "infrastruktur" | "kebersihan" | "keamanan" | "sosial" | "lainnya";
+export type Status = "Dilaporkan" | "Menunggu Verifikasi" | "Dalam Proses" | "Selesai";
+
+export interface CommentType {
+  id: string;
+  user: {
+    avatar?: string;
+    name: string;
+    username: string;
+  };
+  comment: string;
+  date: string;
+  likes: number;
+}
+
+export interface ReportType {
+  _id?: string | ObjectId;
+  userId: string;
   title: string;
   description: string;
-  category: 'infrastruktur' | 'kebersihan' | 'keamanan' | 'sosial' | 'lainnya';
+  category: Category;
+  status: Status;
+  recentComments: CommentType[];
   location: {
     lat: number;
     lng: number;
     address?: string;
-  }
-  mediaUrls?: string[]; // foto/video (opsional)
-  status: 'terdaftar' | 'dikerjakan' | 'selesai';
-  createdBy: string; // userId
+  };
+    reporter?: {
+    name?: string;
+    avatar?: string;
+    username?: string;
+  };
+  mediaUrls?: string[];
+  createdBy: string;
   voteCount: number;
+  commentCount: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Urbanize report",
-  description: "Laporkan masalah dengan cepat dan segera diproses",
-  icons: "/globe.svg"
+  title: "Urbanize - Platform Partisipasi Warga",
+  description: "Platform yang memungkinkan warga kota untuk berperan aktif dalam mengidentifikasi dan menyelesaikan masalah di lingkungan mereka.",
 };
 
 export default function RootLayout({
@@ -29,6 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
