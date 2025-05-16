@@ -34,7 +34,7 @@ export default function LoginPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-    // Clear error when user types
+    
     if (errors[name as keyof LoginFormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
     }
@@ -50,7 +50,7 @@ export default function LoginPage() {
       setIsLoading(true)
 
       // Call login API
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,17 +64,14 @@ export default function LoginPage() {
         throw new Error(data.error || "Login gagal")
       }
 
-      // Store token and user data in cookies
       setCookies(data.token, data.user)
 
-      // Show success toast
       toast({
         variant: "urbanize",
         title: "Login Berhasil",
         description: `Selamat datang kembali, ${data.user.name}!`,
       })
 
-      // Redirect to dashboard or home
       router.push("/")
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -117,7 +114,7 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="nama@email.com"
+                  placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   className={errors.email ? "border-red-500" : ""}

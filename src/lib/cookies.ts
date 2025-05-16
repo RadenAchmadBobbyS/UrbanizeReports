@@ -1,3 +1,4 @@
+import { UserRole } from "@/types/types"
 import Cookies from "js-cookie"
 
 // Cookie expiration in days
@@ -7,6 +8,8 @@ export interface UserData {
   _id: string
   name: string
   email: string
+  avatarUrl?: string;
+  role: UserRole;
 }
 
 export const setCookies = (token: string, userData: UserData) => {

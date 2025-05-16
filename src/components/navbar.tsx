@@ -1,12 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import Cookies from "js-cookie"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const userCookie = Cookies.get("userData")
+    if (userCookie) {
+      try {
+        const userData = JSON.parse(userCookie)
+        setUser(userData)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    Cookies.remove("userData")
+    setUser(null)
+    router.push("/") // atau bisa router.refresh()
+  }
 
   return (
     <header className="bg-white sticky top-0 z-50 shadow-sm">
@@ -19,10 +48,10 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link href="#recent-reports" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+          <Link href="/reports" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
             Laporan Terbaru
           </Link>
-          <Link href="#features" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+          <Link href="#fitur" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
             Fitur
           </Link>
           <Link href="#how-it-works" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
@@ -33,15 +62,45 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        {/* Auth / User Actions */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="/auth/login">
-            <Button variant="ghost" className="text-gray-600 hover:text-[#ec6f66] hover:bg-gray-100 hover:cursor-pointer">
-            Masuk
-            </Button>
-          </Link>
-          <Link href="/auth/register">
-            <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:cursor-pointer">Daftar</Button>
-          </Link>
+          {!user ? (
+            <>
+              <Link href="/auth/login">
+                <Button variant="ghost" className="text-gray-600 hover:text-[#ec6f66] hover:bg-gray-100 hover:cursor-pointer">
+                  Masuk
+                </Button>
+              </Link>
+              <Link href="/auth/register">
+                <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:cursor-pointer">Daftar</Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/reports/create">
+                <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:cursor-pointer">Laporkan</Button>
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar className="w-10 h-10  ">
+                      <img
+                      src="/Hello-pana.png"
+                      alt="User Avatar"
+                      width={80}
+                      height={80}
+                      className="rounded-full hover:cursor-pointer bg-[#f3a183] hover:bg-[#ec6f66]"
+                      />
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem disabled className="capitalize">{user.name}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="text-[#ec6f66]">
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -54,42 +113,37 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-white py-4 shadow-md">
           <nav className="container mx-auto px-4 flex flex-col space-y-4">
-            <Link
-              href="#recent-reports"
-              className="text-gray-600 hover:text-[#ec6f66] transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="/reports" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
               Laporan Terbaru
             </Link>
-            <Link
-              href="#features"
-              className="text-gray-600 hover:text-[#ec6f66] transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="#features" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
               Fitur
             </Link>
-            <Link
-              href="#how-it-works"
-              className="text-gray-600 hover:text-[#ec6f66] transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="#how-it-works" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
               Cara Kerja
             </Link>
-            <Link
-              href="#testimonials"
-              className="text-gray-600 hover:text-[#ec6f66] transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
+            <Link href="#testimonials" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
               Testimoni
             </Link>
-              <div className="hidden md:flex items-center space-x-4">
-              <Link href="/auth/login" className="text-gray-600 hover:text-[#ec6f66] hover:bg-gray-100 px-4 py-2 rounded transition-colors">
-                Masuk
-              </Link>
-              <Link href="/auth/register" className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 px-4 py-2 rounded transition-colors">
-                Daftar
-              </Link>
-            </div>
+            {!user ? (
+              <>
+                <Link href="/auth/login" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
+                  Masuk
+                </Link>
+                <Link href="/auth/register" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
+                  Daftar
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/report/create" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
+                  Laporkan
+                </Link>
+                <button onClick={handleLogout} className="text-red-500 text-left px-4">
+                  Logout
+                </button>
+              </>
+            )}
           </nav>
         </div>
       )}

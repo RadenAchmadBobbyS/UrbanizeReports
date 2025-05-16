@@ -1,5 +1,5 @@
 import { database } from "@/config/mongodb";
-import { ReportType } from "@/types/types";
+import { CommentType, ReportType, Status } from "@/types/types";
 import { ObjectId } from "mongodb";
 
 
@@ -12,7 +12,7 @@ export class ReportModel {
     return await this.collection().insertOne({
       ...reportData,
       voteCount: 0,
-      status: "Dilaporkan",
+      status: Status.DILAPORKAN,
       createdAt: new Date(),
     });
   }
@@ -44,6 +44,16 @@ export class ReportModel {
       { projection: { voteCount: 1 } }
     );
   }
+
+  static async addComment(reportId: string, comment: CommentType) {
+  return await this.collection().updateOne(
+    { _id: new ObjectId(reportId) },
+    {
+      $push: { comments: comment },
+      $inc: { commentCount: 1 }
+    }
+  );
+}
 
   static async addPhoto(reportId: string, imageUrl: string) {
     return await this.collection().updateOne(

@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Urbanize - Platform Partisipasi Warga",
   description: "Platform yang memungkinkan warga kota untuk berperan aktif dalam mengidentifikasi dan menyelesaikan masalah di lingkungan mereka.",
+  icons: "/autonomy-rafiki.png"
 };
 
 export default function RootLayout({

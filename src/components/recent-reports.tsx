@@ -76,11 +76,11 @@ export default function RecentReports() {
   }
 
   return (
-    <section id="recent-reports" className="py-16 bg-gray-50">
+    <section id="recent-reports" className="py-16 bg-gradient-to-r from-[#ec6f66] to-[#f3a183] shadow-2xl">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold sm:text-3xl">Laporan Terbaru</h2>
-          <Link href="/reports" className="text-[#ec6f66] hover:text-[#f3a183] font-medium flex items-center">
+          <h2 className="text-2xl font-bold sm:text-3xl text-white pl-10">Laporan Terbaru</h2>
+          <Link href="/reports" className="text-[#fdfdfd] hover:text-[#3e3e3e] font-medium flex items-center pr-10">
             Lihat Semua
             <ChevronRight className="h-4 w-4 ml-1" />
           </Link>
@@ -90,7 +90,7 @@ export default function RecentReports() {
           {reports.map((report) => (
             <div
               key={report._id}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-gray-100"
+              className="bg-white rounded-xl overflow-hidden shadow-2xl hover:shadow-orange-900 transition-all border border-gray-100"
             >
               <div className="flex flex-col md:flex-row">
                 {/* Image Section */}
@@ -98,7 +98,7 @@ export default function RecentReports() {
                   <Link href={`/reports/${report._id}`}>
                     <div className="aspect-square md:h-full overflow-hidden">
                       <img
-                        src={report.mediaUrls?.[0] || "/placeholder.svg"}
+                        src={report.mediaUrls?.[0]}
                         alt={report.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
@@ -152,7 +152,7 @@ export default function RecentReports() {
                   <div className="mt-auto flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
-                        <AvatarImage src={report.reporter?.avatar || "/placeholder.svg"} alt={report.reporter?.name} />
+                        <AvatarImage src={report.reporter?.avatar} alt={report.reporter?.name} />
                         <AvatarFallback>{report.reporter?.name?.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <span className="text-xs text-gray-600">{report.reporter?.name || "Anonim"}</span>
@@ -184,9 +184,11 @@ export default function RecentReports() {
         </div>
 
         <div className="text-center mt-10">
-          <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90">
-            Laporkan Masalah Baru
-          </Button>
+          <Link href="/reports/create">
+              <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:shadow-orange-900 hover:cursor-pointer  ">
+                Laporkan Masalah Baru
+              </Button>
+          </Link>
         </div>
       </div>
     </section>

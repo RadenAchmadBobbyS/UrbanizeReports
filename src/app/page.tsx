@@ -16,10 +16,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden pl-25">
         <div className="absolute inset-0 opacity-90 z-0"></div>
-        <div
-          className="absolute inset-0 z-0 opacity-10 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center "
-          style={{ backgroundImage: "url('/placeholder.svg?height=1080&width=1920')" }}
-        ></div>
 
         <div className="container relative z-10 mx-auto px-4 py-24 sm:px-6 lg:flex lg:h-[85vh] lg:items-center lg:px-8">
           <div className="text-center lg:text-left lg:w-1/2">
@@ -27,7 +23,7 @@ export default function Home() {
               <TypedHeading />
             </h1>
 
-            <p className="mt-4 max-w-lg mx-auto lg:mx-0 text-black sm:text-xl">
+            <p className="mt-4 max-w-lg mx-auto lg:mx-0 text-gray-500 sm:text-xl">
               Platform yang memungkinkan kamu untuk berperan aktif dalam mengidentifikasi dan menyelesaikan masalah di
               lingkungan sekitarmu.
             </p>
@@ -75,7 +71,7 @@ export default function Home() {
       <RecentReports />
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" id="fitur">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold sm:text-4xl">Fitur Utama</h2>

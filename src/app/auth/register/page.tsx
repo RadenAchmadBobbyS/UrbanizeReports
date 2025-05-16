@@ -57,11 +57,9 @@ export default function RegisterPage() {
       setErrors({})
       setIsLoading(true)
 
-      // Prepare data for API (exclude confirmPassword)
       const { confirmPassword, ...apiData } = formData
 
-      // Call register API
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +90,7 @@ export default function RegisterPage() {
 
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        router.push("/login")
+        router.push("/auth/login")
       }, 2000)
     } catch (error) {
       if (error instanceof z.ZodError) {

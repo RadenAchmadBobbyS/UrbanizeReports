@@ -30,7 +30,7 @@ export class SolutionModel {
     );
   }
 
-  static async comment(solutionId: string, commentData: { userId: string; text: string }) {
+  static async comment(solutionId: string, commentData: { userId: string; text: string; name?:string; avatar?:string }) {
     const comment = {
       ...commentData,
       createdAt: new Date(),

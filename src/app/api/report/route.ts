@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { ReportModel } from "@/models/ReportModel";
 import { z } from "zod";
 import { ReportType, Status } from "@/types/types";
+import { cookies } from "next/headers";
+import Jwt  from "jsonwebtoken";
+import { UserModel } from "@/models/UserModel";
 
 const schema = z.object({
   userId: z.string(),
@@ -17,12 +20,38 @@ const schema = z.object({
   status: z.enum(["Dilaporkan", "Menunggu Verifikasi", "Dalam Proses", "Selesai"]), // Tambahkan properti status
 });
 
-export async function GET() {
-  const reports = await ReportModel.findAll();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get("category");
+  const exclude = searchParams.get("exclude");
+
+  let filter: any = {};
+  if (category) filter.category = category;
+  if (exclude) filter._id = { $ne: exclude };
+
+  const reports = await ReportModel.findAll(filter);
   return NextResponse.json(reports);
 }
 
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
+
 export async function POST(request: Request) {
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get("token");
+  if (!tokenCookie) return NextResponse.json({ message: "Unauthorize", status: 401});
+
+  let userData: { _id: string; email: string };
+
+  try {
+    userData = Jwt.verify(tokenCookie.value, JWT_SECRET) as { _id: string; email: string };
+  } catch {
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+  }
+
+  const user = await UserModel.findById(userData._id);
+
+  if (!user) return NextResponse.json({ error: "User not found"}, { status: 404 })
+
   const body = await request.json();
   const parsed = schema.safeParse(body);
 
@@ -30,7 +59,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  const validStatuses: Status[] = ["Dilaporkan", "Menunggu Verifikasi", "Dalam Proses", "Selesai"];
+  const validStatuses: Status[] = [
+    Status.DILAPORKAN,
+    Status.MENUNGGU_VERIFIKASI,
+    Status.DALAM_PROSES,
+    Status.SELESAI,
+  ];
 
   if (!validStatuses.includes(parsed.data.status as Status)) {
     return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
@@ -38,8 +72,13 @@ export async function POST(request: Request) {
 
   const reportData: ReportType = {
     ...parsed.data,
+    userId: user?._id.toString(),
+    reporter: {
+      name: user?.name || "",
+      avatar: user?.avatarUrl || "",
+      username: user?.email || "",
+    },
     status: parsed.data.status as Status, // Pastikan tipe sesuai
-    createdBy: parsed.data.userId,
     voteCount: 0,
     commentCount: 0,
     createdAt: new Date(),
