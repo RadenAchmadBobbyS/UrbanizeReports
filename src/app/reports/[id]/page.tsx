@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, use } from "react"
+import React, { useState, useEffect, use, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -25,6 +25,7 @@ import {
   ChevronLeftIcon,
   Speech,
   Lightbulb,
+  ThumbsDown,
 } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
@@ -47,8 +48,11 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const [similarReports, setSimilarReports] = useState<ReportType[]>([])
   const [loadingSimilar, setLoadingSimilar] = useState(false)
 
+  const [posting, setPosting] = useState(false);
+  const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [showSolutionModal, setShowSolutionModal] = useState(false);
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(null);
+  const commentInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
     const userCookie = Cookies.get("userData")
@@ -127,6 +131,83 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     }
   }
 
+  const scrollToCommentInput = () => {
+    commentInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    commentInputRef.current?.focus();
+  }
+
+    // Upvote solusi
+    const handleUpvote = async (id: string) => {
+      const res = await fetch(`http://localhost:3000/api/report/${id}/vote`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        setReport(prev => 
+        prev
+          ? {
+              ...prev,
+              voteCount: (prev.voteCount || 0) + 1,
+              voters: prev.voters ? [...prev.voters, user._id] : [user._id], // update voters
+            }
+          : prev
+        );
+      }
+      setPosting(true);
+      setTimeout(() => setPosting(false), 500);
+    };
+
+    // Helper: cek apakah user sudah vote
+    const hasVoted = user && report?.voters?.includes(user._id);
+
+    // Handler untuk unvote
+    const handleUnvote = async (id: string) => {
+      const res = await fetch(`http://localhost:3000/api/report/${id}/vote`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.ok) {
+        setReport(prev =>
+          prev
+            ? {
+                ...prev,
+                voteCount: Math.max((prev.voteCount || 1) - 1, 0),
+                voters: prev.voters?.filter((v: any) => v !== user._id), // update voters
+              }
+            : prev
+        );
+      }
+      setPosting(true);
+      setTimeout(() => setPosting(false), 500);
+    };
+
+    // Comment solusi
+  const handleComment = async (id: string) => {
+    const text = commentInputs[id];
+    if (!text || !user) return;
+    const res = await fetch(`/api/report/${id}/comment`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ comment: text })
+    });
+  if (res.ok) {
+    const data = await res.json();
+    setReport(prev =>
+      prev
+        ? {
+            ...prev,
+            recentComments: [data.comment, ...(prev.recentComments || [])],
+            commentCount: (prev.commentCount || 0) + 1,
+          }
+        : prev
+    );
+  }
+  setCommentInputs(inputs => ({ ...inputs, [id]: "" }));
+  setPosting(true);
+  setTimeout(() => setPosting(false), 500);
+  };
+
   // Loading & error states
   if (loading) return <div className="p-8 text-center">Memuat laporan...</div>
   if (error || !report) return <div className="p-8 text-center text-red-500">{error || "Laporan tidak ditemukan"}</div>
@@ -170,7 +251,11 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                         <span className="text-sm text-gray-500 flex items-center">
                           <Clock className="h-3.5 w-3.5 mr-1" />
                           {report.createdAt
-                            ? new Date(report.createdAt).toLocaleDateString()
+                            ? new Date(report.createdAt).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })
                             : ""}
                         </span>
                       </div>
@@ -195,11 +280,29 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </div>
 
                   <div className="flex items-center gap-3 mb-6">
-                    <Button className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:cursor-pointer">
-                      <ThumbsUp className="h-4 w-4" />
-                      Dukung ({report.voteCount})
-                    </Button>
-                    <Button className="bg-gradient-to-r from-[#2d77b8] to-[#5edae1] text-white hover:opacity-90 hover:cursor-pointer">
+                    
+                    {hasVoted ? (
+                      <Button
+                        className="bg-gradient-to-r from-gray-400 to-gray-600 text-white hover:opacity-90 hover:cursor-pointer"
+                        onClick={() => handleUnvote(id)}
+                      >
+                        <ThumbsDown className="h-4 w-4" />
+                        Batalkan Dukungan ({report.voteCount})
+                      </Button>
+                    ) : (
+                      <Button
+                        className="bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90 hover:cursor-pointer"
+                        onClick={() => handleUpvote(id)}
+                      >
+                        <ThumbsUp className="h-4 w-4" />
+                        Dukung ({report.voteCount})
+                      </Button>
+                    )}
+
+                    <Button 
+                      className="bg-gradient-to-r from-[#2d77b8] to-[#5edae1] text-white hover:opacity-90 hover:cursor-pointer"
+                      onClick={scrollToCommentInput}
+                    >
                       <MessageSquare className="h-4 w-4" />
                       Komentar ({report.commentCount || 0})
                     </Button>
@@ -223,12 +326,11 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
 
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={report.reporter?.avatar} alt={report.reporter?.name || ""} />
-                      <AvatarFallback>{report.reporter?.name?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{report.reporter?.name?.charAt(0) || "A"}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium text-sm">{report.reporter?.name || "WOW"}</p>
-                      <p className="text-xs text-gray-500">{report.reporter?.username}</p>
+                      <p className="font-medium text-sm">{report.reporter?.name || "Anonim"}</p>
+                      <p className="text-xs text-gray-500">{report.reporter?.username || "secret"}</p>
                     </div>
                   </div>
                 </div>
@@ -265,10 +367,15 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   <div className="flex gap-3 mb-6">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="/Hello-pana.png" alt="Your Avatar" />
-                      <AvatarFallback>YA</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 relative">
-                      <Input placeholder="Tulis komentar..." className="pr-24 bg-gray-50 border-gray-200" />
+                      <Input
+                          ref={commentInputRef} 
+                          placeholder="Tulis komentar..." 
+                          className="pr-24 bg-gray-50 border-gray-200" 
+                          value={commentInputs[id] || ""}
+                          onChange={e => setCommentInputs(inputs => ({ ...inputs, [id]: e.target.value }))}
+                      />
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500">
                           <ImageIcon className="h-4 w-4" />
@@ -278,6 +385,8 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                         </Button>
                         <Button
                           size="icon"
+                          onClick={() => handleComment(id)}
+                          disabled={!commentInputs[id]}
                           className="h-8 w-8 bg-gradient-to-r from-[#ec6f66] to-[#f3a183] text-white hover:opacity-90"
                         >
                           <Send className="h-4 w-4" />
@@ -301,7 +410,15 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                                 <span className="font-medium text-sm">{comment.user.name}</span>
                                 <span className="text-xs text-gray-500 ml-2">{comment.user.username}</span>
                               </div>
-                              <span className="text-xs text-gray-500">{comment.date}</span>
+                              <span className="text-xs text-gray-500">
+                              {comment.date
+                                ? new Date(comment.date).toLocaleDateString("en-US", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })
+                                : ""}
+                            </span>
                             </div>
                             <p className="text-sm text-gray-700">{comment.comment}</p>
                           </div>

@@ -48,6 +48,7 @@ export interface ReportType {
   };
   mediaUrls?: string[];
   voteCount: number;
+  voters?: (string | ObjectId)[];
   commentCount: number;
   createdAt: Date;
   updatedAt: Date;

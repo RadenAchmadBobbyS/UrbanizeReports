@@ -1,6 +1,6 @@
 import { database } from "@/config/mongodb";
 import { CommentType, ReportType, Status } from "@/types/types";
-import { ObjectId } from "mongodb";
+import { ObjectId, ReturnDocument } from "mongodb";
 
 
 export class ReportModel {
@@ -12,6 +12,8 @@ export class ReportModel {
     return await this.collection().insertOne({
       ...reportData,
       voteCount: 0,
+      voters: [],
+      recentComments: [],
       status: Status.DILAPORKAN,
       createdAt: new Date(),
     });
@@ -38,20 +40,30 @@ export class ReportModel {
     );
   }
 
-  static async voteCount(reportId: string) {
-    return await this.collection().findOne(
+  static async voteCount(reportId: string, userId: string) {
+    return await this.collection().findOneAndUpdate(
       { _id: new ObjectId(reportId) },
-      { projection: { voteCount: 1 } }
+      { $inc: { voteCount: 1 }, $addToSet: { voters: userId } },
+      { returnDocument: "after", projection: { voteCount: 1, voters: 1 }}
     );
   }
 
+  static async unvoteCount(reportId: string, userId: string) {
+  return await this.collection().findOneAndUpdate(
+    { _id: new ObjectId(reportId) },
+    { $inc: { voteCount: -1 }, $pull: { voters: userId } },
+    { returnDocument: "after", projection: { voteCount: 1, voters: 1 } }
+  );
+}
+
   static async addComment(reportId: string, comment: CommentType) {
-  return await this.collection().updateOne(
+  return await this.collection().findOneAndUpdate(
     { _id: new ObjectId(reportId) },
     {
-      $push: { comments: comment },
+      $push: { comments: comment, recentComments: comment },
       $inc: { commentCount: 1 }
-    }
+    },
+    { returnDocument: "after", projection: { comments: 1, commentCount: 1, recentComments: 1 }}
   );
 }
 

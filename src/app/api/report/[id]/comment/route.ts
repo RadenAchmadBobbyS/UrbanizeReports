@@ -6,7 +6,10 @@ import { UserModel } from "@/models/UserModel";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+
+  const { id } = await context.params
+
   // Ambil token dari cookie
   const cookieStore = await cookies();
   const tokenCookie = cookieStore.get("token");
@@ -36,12 +39,13 @@ export async function POST(request: Request, { params }: { params: { id: string 
       username: user?.email || "",
       avatar: user?.avatarUrl || "",
     },
+    recentComments: body.comment,
     comment: body.comment,
     date: new Date().toISOString(),
     likes: 0,
   };
 
-  await ReportModel.addComment(params.id, comment);
+  await ReportModel.addComment(id, comment);
 
   return NextResponse.json({ message: "Comment added", comment });
 }
