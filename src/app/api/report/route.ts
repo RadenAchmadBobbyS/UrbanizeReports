@@ -5,6 +5,7 @@ import { ReportType, Status } from "@/types/types";
 import { cookies } from "next/headers";
 import Jwt  from "jsonwebtoken";
 import { UserModel } from "@/models/UserModel";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 const schema = z.object({
   userId: z.string(),
@@ -34,6 +35,9 @@ export async function GET(request: Request) {
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
+
+
+
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -70,8 +74,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
   }
 
+  let uploadedUrls: string[] = [];
+
+  if (parsed.data.mediaUrls && parsed.data.mediaUrls.length > 0) {
+    for (const base64 of parsed.data.mediaUrls) {
+      const uploadedUrl = await uploadToCloudinary(base64, "urban-reports");
+      uploadedUrls.push(uploadedUrl);
+    }
+  }
+
   const reportData: ReportType = {
     ...parsed.data,
+    mediaUrls: uploadedUrls,
     userId: user?._id.toString(),
     reporter: {
       name: user?.name || "",
