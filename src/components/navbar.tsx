@@ -51,14 +51,11 @@ export default function Navbar() {
           <Link href="/reports" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
             Laporan Terbaru
           </Link>
-          <Link href="#fitur" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
-            Fitur
-          </Link>
-          <Link href="#how-it-works" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+          <Link href="/cara-kerja" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
             Cara Kerja
           </Link>
-          <Link href="#testimonials" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
-            Testimoni
+          <Link href="#fitur" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+            About Us
           </Link>
         </nav>
 
@@ -116,15 +113,12 @@ export default function Navbar() {
             <Link href="/reports" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
               Laporan Terbaru
             </Link>
-            <Link href="#features" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
-              Fitur
-            </Link>
-            <Link href="#how-it-works" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
-              Cara Kerja
-            </Link>
-            <Link href="#testimonials" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>
-              Testimoni
-            </Link>
+          <Link href="/cara-kerja" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+            Cara Kerja
+          </Link>
+          <Link href="#fitur" className="text-gray-600 hover:text-[#ec6f66] transition-colors">
+            About Us
+          </Link>
             {!user ? (
               <>
                 <Link href="/auth/login" className="text-gray-600 hover:text-[#ec6f66]" onClick={() => setIsMenuOpen(false)}>

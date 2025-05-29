@@ -209,7 +209,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   };
 
   // Loading & error states
-  if (loading) return <div className="p-8 text-center">Memuat laporan...</div>
+  if (loading) return <div className="flex items-center justify-center py-55"><img src="/Globalization.gif" width={200} height={200}/></div>
   if (error || !report) return <div className="p-8 text-center text-red-500">{error || "Laporan tidak ditemukan"}</div>
 
 
@@ -531,7 +531,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 <div className="p-6">
                   <h2 className="text-lg font-bold mb-4">Laporan Serupa</h2>
                   <div className="space-y-4">
-                    {loadingSimilar && <div>Memuat laporan serupa...</div>}
+                    {loadingSimilar && <img src="/Globalization.gif" width={200} height={200}/>}
                     {!loadingSimilar && similarReports.length === 0 && <div className="text-gray-400 text-sm">Tidak ada laporan serupa.</div>}
                     {similarReports.slice(0, 2).map((similarReport: ReportType) => (
                       <Link href={`/reports/${similarReport._id}`} key={similarReport._id?.toString()}>
