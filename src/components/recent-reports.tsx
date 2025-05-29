@@ -1,5 +1,4 @@
-"use client";
-import { JSX, useEffect, useState } from "react";
+import { JSX } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,42 +37,18 @@ const statusColors: Record<string, string> = {
   Selesai: "bg-green-100 text-green-800 border-green-200",
 };
 
-export default function RecentReports() {
-  const [reports, setReports] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function RecentReports() {
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
         const response = await fetch("http://localhost:3000/api/report");
         if (!response.ok) {
           throw new Error("Failed to fetch reports");
         }
-        const data = await response.json();
+        const reports = await response.json();
 
         // Urutkan laporan berdasarkan tanggal terbaru
-        const sortedReports = data.sort(
+        const sortedReports = reports.sort(
           (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
-
-        setReports(sortedReports);
-      } catch (error) {
-        console.error("Error fetching reports:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReports();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   return (
     <section id="recent-reports" className="py-16 bg-gradient-to-r from-[#ec6f66] to-[#f3a183] shadow-2xl">
@@ -87,7 +62,7 @@ export default function RecentReports() {
         </div>
 
         <div className="space-y-6 max-w-3xl mx-auto">
-          {reports.map((report) => (
+          {sortedReports.map((report: any) => (
             <div
               key={report._id}
               className="bg-white rounded-xl overflow-hidden shadow-2xl hover:shadow-orange-900 transition-all border border-gray-100"

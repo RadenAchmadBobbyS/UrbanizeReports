@@ -226,35 +226,6 @@ export default function CreateReport() {
               </div>
             </div>
 
-            {/* Lokasi */}
-          <div className="sm:col-span-2">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-              Lokasi (klik peta atau isi alamat)
-            </label>
-            <input
-              type="text"
-              name="address"
-              id="address"
-              value={formData.location.address}
-              onChange={handleAddressChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-              placeholder="Masukkan alamat atau klik peta"
-            />
-            {addressError && (
-              <p className="text-xs text-red-500">{addressError}</p>
-            )}
-            <div className="mt-4 h-64 w-full rounded-md overflow-hidden">
-              <Map
-                lat={formData.location.lat}
-                lng={formData.location.lng}
-                onMapClick={handleMapClick}
-              />
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Koordinat: {formData.location.lat}, {formData.location.lng}
-            </p>
-          </div>
-
             {/* Deskripsi */}
             <div className="sm:col-span-2">
               <label htmlFor="description" className="block text-sm font-medium text-gray-700">
@@ -306,6 +277,36 @@ export default function CreateReport() {
                 </div>
               </div>
             </div>
+
+            {/* Lokasi */}
+          <div className="sm:col-span-2">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              Lokasi (klik peta atau isi alamat)
+            </label>
+            <input
+              type="text"
+              name="address"
+              id="address"
+              value={formData.location.address}
+              onChange={handleAddressChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              placeholder="Masukkan alamat atau klik peta"
+            />
+            {addressError && (
+              <p className="text-xs text-red-500">{addressError}</p>
+            )}
+            <div className="mt-4 h-64 w-full rounded-md overflow-hidden">
+              <Map
+                lat={formData.location.lat}
+                lng={formData.location.lng}
+                onMapClick={handleMapClick}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Koordinat: {formData.location.lat}, {formData.location.lng}
+            </p>
+          </div>
+
           </div>
         </div>
 

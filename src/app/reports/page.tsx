@@ -70,7 +70,7 @@ export default function ReportsPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Loading...</p>
+        <img src="/Globalization.gif" width={200} height={200}/>
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function ReportsPage() {
                   <div className="relative">
                     <div className="aspect-video overflow-hidden">
                       <img
-                        src={report.mediaUrls?.[0] || "/placeholder.svg"}
+                        src={report.mediaUrls?.[0]}
                         alt={report.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
@@ -175,7 +175,7 @@ export default function ReportsPage() {
                     <div className="mt-auto pt-3 border-t border-gray-100 flex justify-between items-center">
                       <div className="flex items-center gap-1.5">
                         <Avatar className="h-5 w-5">
-                          <AvatarImage src={report.reporter?.avatar || "/placeholder.svg"} alt={report.reporter?.name} />
+                          <AvatarImage src={report.reporter?.avatar} alt={report.reporter?.name} />
                           <AvatarFallback>{report.reporter?.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className="text-xs text-gray-600">{report.reporter?.username || "Anonim"}</span>
